@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="matches-section">
+    <h1>My Orders</h1>
+    <div class="matches-container">
+        {% for order in orders %}
+        <div class="match-card">
+            <span class="category">
+                {{ order.game.category.name }}
+            </span>
+            <div class="teams">
+                <h3>{{order.game.teams.team1 }}</h3>
+                <span>VS</span>
+                <h3>{{ order.game.teams.team2 }}</h3>
+            </div>
+            <p>📅 {{order.game.date|date:"d M Y, H:i" }}</p>
+            <p>📍 {{order.game.stadium}}</p>
+            <p>Quantity: {{ order.quantity }}</p>
+            <p>Ticket Price: ${{ order.game.ticket_price }}</p>
+            <p>Order Date: {{ order.created_at|date:"d M Y, H:i" }}</p>
+            <p>Status: {{ order.status|title }}</p>
+            
+            {% if order.status != 'cancelled' %}
+                <form method="POST" action="{% url 'cancel_order' order.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="cancel-btn">
+                        CANCEL ORDER
+                    </button>
+                </form>
+            {% else %}
+
+                <span class="cancelled-badge">
+                    ORDER CANCELLED
+                </span>
+            {% endif %}
+        </div>
+        {% empty %}
+            <p>You haven't ordered any tickets yet.</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

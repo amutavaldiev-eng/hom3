@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="match-card">
+    <h2>
+        {{game.teams.team1}}
+        {{game.team1_score}} - {{ game.team2_score }}
+        {{game.teams.team2}}
+    </h2>
+    <p>{{game.date|date:"d M Y, H:i"}}</p>
+    <p>{{game.stadium}}</p>
+
+    <h2 class="video-title">Match Highlights</h2>
+<p>VIDEO URL: {{game.video}}</p>
+{% if game.video %}
+    <div class="video-box">
+        <iframe
+            src="{{ game.video }}"
+            title="Match Video"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+{% endif %}
+</div>
+{% endblock %}

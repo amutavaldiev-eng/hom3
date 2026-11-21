@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="hero">
+    <div class="hero-slides">
+        <div class="slide football"></div>
+        <div class="slide basketball"></div>
+        <div class="slide tennis"></div>
+        <div class="slide volleyball"></div>
+    </div>
+    <div class="hero-content">
+        <h1>Find Your <span>Match</span></h1>
+        <p>Book your tickets and enjoy the game!</p>
+        <form action="{% url 'matches' %}" method="GET" class="sport-form">
+
+            <select name="category" onchange="this.form.submit()">
+                <option value="">Select Your Sport</option>
+                {% for category in categories %}
+                    <option value="{{category.id}}">
+                        {{category.name}}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+</section>
+<section class="matches-section">
+    <div class="section-title">
+        <h2>Result and Upcomings</h2>
+        
+    </div>
+
+    <div class="matches-container">
+{% for game in games %}
+<div class="match-card">
+    <span class="category">{{ game.category.name }}</span>
+    <div class="teams">
+        <h3>{{ game.teams.team1 }}</h3>
+        <span>VS</span>
+        <h3>{{ game.teams.team2 }}</h3>
+    </div>
+    <p>📅 {{ game.date|date:"d M Y, H:i" }}</p>
+    <p>📍 {{ game.stadium }}</p>
+
+
+
+    {% if game.status == 'finished' %}
+        <h2>{{ game.team1_score }} - {{ game.team2_score }}</h2>
+        <a href="{% url 'game_see' game.id %}" class="order-btn">
+            VIEW MATCH
+        </a>
+    {% elif game.status == 'upcoming' %}
+        <p class="price">${{ game.ticket_price }}</p>
+        <p>Tickets: {{ game.tickets_count }}</p>
+        {% if game.tickets_count > 0 %}
+            <a href="{% url 'order_ticket' game.id %}" class="order-btn">ORDER TICKET</a>
+        {% else %}
+            <p>Sold Out</p>
+        {% endif %}
+
+
+    {% elif game.status == 'live' %}
+    <span class="live-badge">● LIVE</span>
+    <h3 style="margin-top: 29px;">
+        {{ game.teams.team1 }} VS {{ game.teams.team2 }}
+    </h3>
+    <p>Match is currently live!</p>
+    {% elif game.status == 'cancelled' %}
+    <span class="cancelled-badge">
+        ✕ MATCH CANCELLED
+    </span>
+    {% endif %}
+    
+
+</div>
+{% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Book Your Ticket</h2>
+        <h3>{{ game.teams.team1 }} VS {{ game.teams.team2 }}</h3>
+        <p>Date: {{ game.date|date:"d M Y, H:i" }}</p>
+        <p>Stadium: {{ game.stadium }}</p>
+        <p>Price: ${{ game.ticket_price }}</p>
+        <p>Available: {{ game.tickets_count }}</p>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="number" name="quantity" min="1" max="{{ game.tickets_count }}" value="1" required>
+            <button type="submit">Confirm Order</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

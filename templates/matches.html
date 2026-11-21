@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="matches-section">
+    <h1>
+        {% if selected_category %}
+            {{ selected_category.name }} Matches
+        {% else %}
+            All Matches
+        {% endif %}
+    </h1>
+    <form method="GET" action="{% url 'matches' %}" class="search-form">
+        {% if request.GET.category %}
+            <input type="hidden" name="category" value="{{ request.GET.category }}">
+        {% endif %}
+        <input type="text" name="q" placeholder="Search team name...">
+        <button type="submit">Search</button>
+    </form>
+
+
+    <div class="matches-container">
+        {% for game in games %}
+        <div class="match-card">
+            <span class="category">{{ game.category.name }}</span>
+            <div class="teams">
+                <h3>{{ game.teams.team1 }}</h3>
+                <span>VS</span>
+                <h3>{{ game.teams.team2 }}</h3>
+            </div>
+            <p>📅 {{ game.date|date:"d M Y, H:i" }}</p>
+            <p>📍 {{ game.stadium }}</p>
+            {% if game.status == 'finished' %}
+                <h2>{{ game.team1_score }} - {{ game.team2_score }}</h2>
+                {% if game.video %}
+                    <a href="{% url 'game_see' game.id %}" class="order-btn">
+            VIEW MATCH
+        </a>
+                {% endif %}
+            {% else %}
+                <p class="price">${{ game.ticket_price }}</p>
+                <p>Tickets: {{ game.tickets_count }}</p>
+                {% if game.tickets_count > 0 %}
+                    <a href="{% url 'order_ticket' game.id %}" class="order-btn">
+                        Order Ticket
+                    </a>
+                {% else %}
+                    <p>Sold Out</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        {% empty %}
+            <p>No matches found.</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}
